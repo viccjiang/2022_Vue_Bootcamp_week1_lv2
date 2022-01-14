@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="row py-3">
+                <div class="col-md-6">
+                    <h2>產品列表</h2>
+                    <table class="table table-hover mt-4">
+                        <thead>
+                            <tr>
+                                <th width="150">產品名稱</th>
+                                <th width="120">
+                                    原價
+                                </th>
+                                <th width="120">
+                                    售價
+                                </th>
+                                <th width="150">
+                                    是否啟用
+                                </th>
+                                <th width="120">
+                                    查看細節
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 使用 v-for 跑迴圈渲染，v-for 要搭配 key 值 ，v-bind:key可縮寫為 :key-->
+                            <tr v-for="item in products" v-bind:key="item.id">
+                                <td width="150">{{item.title }}</td>
+                                <td width="120">
+                                    {{item.origin_price }}
+                                </td>
+                                <td width="120">
+                                    {{item.price }}
+                                </td>
+                                <td width="150">
+                                    <!-- 有同學做出 checkbox，跟著做一次 -->
+                                    <div class="form-check form-switch">
+                                        <input type="checkbox" class="form-check-input" :id="item.id"
+                                            v-model="item.is_enabled" :true-value="1" :false-value="0">
+                                        <label class="form-check-label" :for="item.id"></label>
+                                        <!-- 使用 v-if / v-else 判斷是否啟用 -->
+                                        <span class="text-success" v-if="item.is_enabled">啟用</span>
+                                        <span class="text-danger" v-else>未啟用</span>
+                                    </div>
+                                </td>
+                                <td width="120">
+                                    <!-- 觸發監聽事件 v-on click 將原本的 item 賦予到空物件的變數 temp -->
+                                    <button type="button" v-on:click="temp = item" class="btn btn-primary">查看細節</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>目前有 <span>{{products.length }}</span> 項產品</p>
+                </div>
+
+                <div class="col-md-6">
+                    <h2>單一產品細節</h2>
+                    <!-- 用 v-if 來載入畫面，即資料若是有 temp.title 就顯示畫面-->
+                    <!-- template 的妙用-->
+                    <template v-if="temp.title">
+                        <div class="card mb-3">
+                            <!-- v-bind:src 綁定圖片 -->
+                            <img v-bind:src="temp.imageUrl" class="card-img-top primary-image" alt="主圖">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    {{ temp.title }}
+                                    <span class="badge bg-primary ms-2">{{temp.category }}</span>
+                                </h5>
+                                <p class="card-text">商品描述：{{temp.description }}</p>
+                                <p class="card-text">商品內容：{{temp.content }}</p>
+                                <div class="d-flex">
+                                    <p class="card-text me-2">{{temp.price }}</p>
+                                    <p class="card-text text-secondary"><del>{{ temp.origin_price}}</del></p>
+                                    {{temp.unit }} / 元
+                                </div>
+                            </div>
+                        </div>
+                        <!-- template -->
+                        <template v-for="(images) in temp.imagesUrl" :key="temp.id">
+                            <!-- 圖片數量使用迴圈來載入，v-if / v-else 來依照選擇顯示畫面 -->
+                            <img :src="images" :alt="temp.title" class="images m-2">
+                        </template>
+                    </template>
+                    <!-- 用 v-if 來載入畫面，資料沒有 temp.title 就顯示以下文字-->
+                    <p class="text-secondary" v-else>請選擇一個商品查看</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="./app.js" type="module"></script>
+</body>
+
+</html>
